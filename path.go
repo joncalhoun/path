@@ -14,21 +14,13 @@ var (
 	ErrNotFound = errors.New("path: no path could be found with the name provided")
 )
 
-// Params is used to define key/values for URL parameters
-// used when building paths.
-// Values are turned into strings via the
-// `fmt.Sprintf("%v")` function, so if you need a specific
-// format you should do that yourself and provide the
-// formatted string as the param.
-type Params map[string]interface{}
-
 // Builder is used to set and retrieve named paths.
 type Builder struct {
 	// Whether or not to turn additional parameters provided
 	// to a path into URL query parameters. Eg if you pass
 	// the params:
 	//
-	//   Params{"name": "jane doe"}
+	//   map[string]interface{}{"name": "jane doe"}
 	//
 	// into a named path defined as `/blah` and this option
 	// was set to true, the `name` parameter would be
@@ -55,7 +47,7 @@ func (b *Builder) Set(name, format string) {
 
 // Path is used to retrieve a named path or return an empty
 // string in no path exists with that name.
-func (b *Builder) Path(name string, params Params) string {
+func (b *Builder) Path(name string, params map[string]interface{}) string {
 	// StrictPath is already thread-safe so no need to lock
 	ret, err := b.StrictPath(name, params)
 	if err != nil {
@@ -66,7 +58,7 @@ func (b *Builder) Path(name string, params Params) string {
 
 // StrictPath is used to retrieve a named path or return an
 // error if no path exists with that name.
-func (b *Builder) StrictPath(name string, params Params) (string, error) {
+func (b *Builder) StrictPath(name string, params map[string]interface{}) (string, error) {
 	b.m.Lock()
 	b.m.Unlock()
 	path, ok := b.paths[name]
@@ -82,7 +74,7 @@ func (b *Builder) init() {
 	})
 }
 
-func replace(path string, params Params, query bool) string {
+func replace(path string, params map[string]interface{}, query bool) string {
 	if params == nil {
 		return path
 	}

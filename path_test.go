@@ -33,10 +33,10 @@ func TestBuilder_Path(t *testing.T) {
 	pb.Set("show_dog", "/dogs/:id")
 	tests := []struct {
 		name, path, want string
-		params           Params
+		params           map[string]interface{}
 	}{
 		{"errors returns empty string", "fake_path", "", nil},
-		{"existing paths work", "show_dog", "/dogs/123", Params{"id": 123}},
+		{"existing paths work", "show_dog", "/dogs/123", map[string]interface{}{"id": 123}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestBuilder_StrictPath(t *testing.T) {
 
 	type args struct {
 		name   string
-		params Params
+		params map[string]interface{}
 	}
 	tests := []struct {
 		name         string
@@ -76,7 +76,7 @@ func TestBuilder_StrictPath(t *testing.T) {
 			name: "create_dog with params",
 			args: args{
 				name: "create_dog",
-				params: Params{
+				params: map[string]interface{}{
 					"age": 12,
 				},
 			},
@@ -87,7 +87,7 @@ func TestBuilder_StrictPath(t *testing.T) {
 			name: "create_dog ignored params",
 			args: args{
 				name: "create_dog",
-				params: Params{
+				params: map[string]interface{}{
 					"age": 12,
 				},
 			},
@@ -98,7 +98,7 @@ func TestBuilder_StrictPath(t *testing.T) {
 			name: "show_dog",
 			args: args{
 				name: "show_dog",
-				params: Params{
+				params: map[string]interface{}{
 					"id": 123,
 				},
 			},
@@ -137,7 +137,7 @@ func TestBuilder_init(t *testing.T) {
 func Test_replace(t *testing.T) {
 	type args struct {
 		path   string
-		params Params
+		params map[string]interface{}
 		query  bool
 	}
 	tests := []struct {
@@ -159,7 +159,7 @@ func Test_replace(t *testing.T) {
 			name: "id replacement",
 			args: args{
 				path: "/widgets/:id",
-				params: Params{
+				params: map[string]interface{}{
 					"id": 123,
 				},
 				query: false,
@@ -170,7 +170,7 @@ func Test_replace(t *testing.T) {
 			name: "query with no replacements",
 			args: args{
 				path: "/widgets/",
-				params: Params{
+				params: map[string]interface{}{
 					"id": 123,
 				},
 				query: true,
@@ -184,7 +184,7 @@ func Test_replace(t *testing.T) {
 			name: "query and replacements",
 			args: args{
 				path: "/widgets/:id/edit/:blah",
-				params: Params{
+				params: map[string]interface{}{
 					"id":   123,
 					"blah": "dog",
 					"name": "felix",
@@ -200,7 +200,7 @@ func Test_replace(t *testing.T) {
 			name: "query replacements and missing param",
 			args: args{
 				path: "/widgets/:id/edit/:blah",
-				params: Params{
+				params: map[string]interface{}{
 					"id":   123,
 					"name": "felix",
 				},
